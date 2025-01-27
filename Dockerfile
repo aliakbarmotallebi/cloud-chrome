@@ -34,7 +34,6 @@ RUN apt-get update && apt-get install -y virtualgl turbovnc && rm -rf /var/lib/a
 RUN mkdir -p ~/.vnc ~/.novnc && echo $PASSWORD | vncpasswd -f > ~/.vnc/passwd && chmod 0600 ~/.vnc/passwd
 RUN openssl req -x509 -nodes -newkey rsa:2048 -keyout ~/.novnc/novnc.pem -out ~/.novnc/novnc.pem -days 3650 -subj "/C=US/ST=NY/L=NY/O=NY/OU=NY/CN=NY/emailAddress=email@example.com"
 
-COPY .ratpoisonrc /root/.ratpoisonrc
 
 RUN echo "exec chromium --no-sandbox" > ~/.novnc/novnc_startup.sh && chmod +x ~/.novnc/novnc_startup.sh
 
