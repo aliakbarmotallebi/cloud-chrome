@@ -1,0 +1,11 @@
+services:
+  chrome-vnc:
+    build:
+      context: .
+    container_name: chrome-vnc
+    ports:
+      - "5900:5900"
+    environment:
+      - DISPLAY=:99
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
