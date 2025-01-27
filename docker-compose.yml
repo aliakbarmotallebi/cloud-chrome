@@ -3,12 +3,12 @@ services:
     build:
       context: .
     ports:
-      - "80:80
-      - "5901:5901" 
+      - "80:80"
+      - "5901:5901"
     environment:
       - PASSWORD=password1
     volumes:
-      - ~/.vnc:/root/.vnc 
+      - ~/.vnc:/root/.vnc
       - ~/.ratpoisonrc:/root/.ratpoisonrc
-    network_mode: bridge 
-    restart: always 
+    network_mode: bridge
+    restart: always
