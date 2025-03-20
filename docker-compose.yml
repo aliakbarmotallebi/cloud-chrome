@@ -1,15 +1,16 @@
 
 services:
-  chrome:
-    build: .
-    container_name: chrome_kiosk
+  chrome-remote-desktop:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chrome-remote-desktop
     environment:
-      - DISPLAY=:99
-      - SCREEN_WIDTH=1920
-      - SCREEN_HEIGHT=1080
-      - SCREEN_DEPTH=24
-    ports:
-      - "5900:5900"  
+      - VNC_PASSWORD=yourpassword  
     volumes:
-      - /dev/shm:/dev/shm  
+      - ./home:/home/chrome
+    ports:
+      - "5900:5900"  # VNC
+      - "3389:3389"  # RDP
+    network_mode: bridge
     restart: always
