@@ -1,16 +1,13 @@
-
+version: '3'
 services:
-  chrome-remote-desktop:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: chrome-remote-desktop
+  vnc:
+    build: .
+    container_name: vnc-container
     environment:
-      - VNC_PASSWORD=yourpassword  
+      - VNC_PASSWORD=123456  
     volumes:
-      - ./home:/home/chrome
+      - ./supervisord.conf:/etc/supervisor/supervisord.conf
     ports:
-      - "5900:5900"  # VNC
-      - "3389:3389"  # RDP
-    network_mode: bridge
+      - "5900:5900"
+      - "3389:3389"
     restart: always

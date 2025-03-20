@@ -1,4 +1,5 @@
 #!/bin/bash
 
-/usr/bin/gnome-session &
-exec "$@"
+x11vnc -storepasswd $VNC_PASSWORD /etc/x11vnc.pass
+
+/usr/bin/supervisord -c /supervisord.conf
