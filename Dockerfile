@@ -14,7 +14,8 @@ RUN apt-get install -y \
     fluxbox \
     supervisor \
     curl \
-    gnupg2
+    gnupg2 \
+    dbus-x11
 
 RUN if [ -d /var/lib/apt/lists ]; then rm -rf /var/lib/apt/lists/*; fi
 
