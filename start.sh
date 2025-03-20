@@ -1,15 +1,11 @@
 #!/bin/bash
 
-Xvfb :99 -screen 0 1920x1080x24 &
+rm -f /tmp/.X99-lock
 
-sleep 2
+Xvfb :99 -screen 0 ${SCREEN_WIDTH}x${SCREEN_HEIGHT}x${SCREEN_DEPTH} &
 
-fluxbox &
+x11vnc -display :99 -forever -nopw -bg &
 
-sleep 2
+sleep 3
 
-x11vnc -display :99 -forever -usepw -shared &
-
-sleep 2
-
-DISPLAY=:99 google-chrome-stable --no-sandbox --disable-dev-shm-usage --disable-gpu --kiosk "https://www.google.com" &
+exec google-chrome --no-sandbox --disable-dev-shm-usage --disable-infobars --kiosk https://www.google.com

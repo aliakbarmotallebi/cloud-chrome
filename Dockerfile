@@ -1,29 +1,31 @@
 FROM ubuntu:22.04
 
-ENV DEBIAN_FRONTEND=noninteractive
+ENV DISPLAY=:99
+ENV SCREEN_WIDTH=1920
+ENV SCREEN_HEIGHT=1080
+ENV SCREEN_DEPTH=24
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update
+
+RUN apt-get install -y \
     wget \
     x11vnc \
     xvfb \
+    fluxbox \
     supervisor \
     curl \
-    gnupg \
-    ca-certificates \
-    fluxbox \
-    dbus-x11
+    gnupg2
 
-RUN curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome-keyring.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/google-chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get update && \
-    apt-get install -y google-chrome-stable
+RUN if [ -d /var/lib/apt/lists ]; then rm -rf /var/lib/apt/lists/*; fi
 
-RUN mkdir -p ~/.vnc && \
-    x11vnc -storepasswd mypassword ~/.vnc/passwd
+RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable
+
+RUN if [ -d /var/lib/apt/lists ]; then rm -rf /var/lib/apt/lists/*; fi
 
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-EXPOSE 5900
-
-CMD ["/start.sh"]
+ENTRYPOINT ["/start.sh"]
