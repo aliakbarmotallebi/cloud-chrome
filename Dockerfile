@@ -43,7 +43,11 @@ session.screen0.maxDisableMove: true\n\
 session.screen0.defaultDeco: NONE\n' > /home/chrome/.fluxbox/init && \
     chown chrome:chrome /home/chrome/.fluxbox/init
 
-ADD /supervisord.conf /
+    COPY entrypoint.sh /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh
+
+ADD /supervisord.conf / 
 
 EXPOSE 5900 3389
 
