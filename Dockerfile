@@ -46,7 +46,7 @@ session.screen0.maxDisableMove: true\n\
 session.screen0.defaultDeco: NONE\n' > /home/chrome/.fluxbox/init && \
     chown chrome:chrome /home/chrome/.fluxbox/init
 
-ADD conf/ / 
+ADD /supervisor.conf / 
 
 VOLUME ["/home/chrome"]
 
