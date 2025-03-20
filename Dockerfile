@@ -1,5 +1,4 @@
-# استفاده از Ubuntu به عنوان پایه
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -10,8 +9,14 @@ RUN apt-get update && apt-get install -y \
     xfce4 \
     xfce4-terminal \
     supervisor \
-    google-chrome-stable \
-    && rm -rf /var/lib/apt/lists/*
+    curl \
+    gnupg \
+    ca-certificates
+
+RUN curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list && \
+    apt-get update && \
+    apt-get install -y google-chrome-stable
 
 RUN mkdir -p ~/.vnc && \
     x11vnc -storepasswd mypassword ~/.vnc/passwd
