@@ -1,14 +1,10 @@
 services:
-  chromium_vnc:
-    build:
-      context: .
+  chrome-kiosk:
+    build: .
+    container_name: chrome-kiosk
     ports:
-      - "80:80"
-      - "5901:5901"
+      - "5900:5900"  
     environment:
-      - PASSWORD=password1
-    volumes:
-      - ~/.vnc:/root/.vnc
-      - ~/.ratpoisonrc:/root/.ratpoisonrc
-    network_mode: bridge
-    restart: always
+      - DISPLAY=:99
+    shm_size: "2g"
+    restart: unless-stopped
