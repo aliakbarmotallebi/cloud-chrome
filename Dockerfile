@@ -1,56 +1,60 @@
 FROM ubuntu:22.04
 
-ENV DEBIAN_FRONTEND="noninteractive" \
-    LC_ALL="C.UTF-8" \
-    LANG="en_US.UTF-8" \
-    LANGUAGE="en_US.UTF-8"
+ENV DEBIAN_FRONTEND=noninteractive
+ENV SCREEN_WIDTH=1920
+ENV SCREEN_HEIGHT=1080
+ENV SCREEN_DEPTH=24
+ENV DISPLAY=:99
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update -y && apt-get upgrade -y && apt-get install -y \
     wget \
-    gnupg2 \
-    lsb-release \
-    ca-certificates && \
-    wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get update
-
-RUN apt-get install -y \
-    google-chrome-stable \
-    xrdp \
-    pulseaudio \
-    supervisor \
+    curl \
+    gnupg \
+    ca-certificates \
+    libx11-xcb1 \
+    libgdk-pixbuf2.0-0 \
+    libxss1 \
+    libnss3 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libasound2 \
+    libappindicator3-1 \
+    libxrandr2 \
+    x11-utils \
+    libgtk-3-0 \
     x11vnc \
-    fluxbox \
-    xfce4 \
-    fonts-takao \
-    mc \
-    dbus \
-    dbus-x11 && \
-    apt-get clean && \
-    rm -rf /var/cache/* /var/log/apt/* /var/lib/apt/lists/*
+    xvfb \
+    dbus-x11 \
+    mesa-utils \
+    libgl1-mesa-dri \
+    libgl1-mesa-glx \
+    xdg-utils
 
-RUN addgroup chrome-remote-desktop && \
-    useradd -m -G chrome-remote-desktop,pulse-access -p chrome chrome && \
-    echo "chrome:chrome" | chpasswd && \
-    mkdir -p /home/chrome/.config/chrome-remote-desktop && \
-    mkdir -p /home/chrome/.fluxbox && \
-    chown -R chrome:chrome /home/chrome/.config /home/chrome/.fluxbox
+RUN mkdir -p ~/.vnc && x11vnc -storepasswd 123456 ~/.vnc/passwd
 
-RUN echo 'session.screen0.toolbar.visible: false\n\
-session.screen0.fullMaximization: true\n\
-session.screen0.maxDisableResize: true\n\
-session.screen0.maxDisableMove: true\n\
-session.screen0.defaultDeco: NONE\n' > /home/chrome/.fluxbox/init && \
-    chown chrome:chrome /home/chrome/.fluxbox/init
+RUN curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome-keyring.gpg
+RUN echo "deb [signed-by=/usr/share/keyrings/google-chrome-keyring.gpg] https://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list
+RUN apt-get update && apt-get install -y google-chrome-stable
 
-    COPY entrypoint.sh /entrypoint.sh
-
-RUN chmod +x /entrypoint.sh
-
-ADD /supervisord.conf / 
-
-EXPOSE 5900 3389
-
-ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
-
-CMD ["/usr/bin/supervisord", "-c", "/supervisord.conf"]
+CMD Xvfb :99 -screen 0 ${SCREEN_WIDTH}x${SCREEN_HEIGHT}x${SCREEN_DEPTH} & \
+    sleep 2 && \
+    x11vnc -forever -usepw -display :99 & \
+    google-chrome-stable \
+        --no-sandbox \
+        --disable-gpu \
+        --disable-software-rasterizer \
+        --start-maximized \
+        --disable-infobars \
+        --disable-session-crashed-bubble \
+        --disable-extensions \
+        --force-device-scale-factor=1 \
+        --window-position=0,0 \
+        --window-size=${SCREEN_WIDTH},${SCREEN_HEIGHT} \
+        --disable-features=VizDisplayCompositor \
+        --disable-hardware-media-key-handling \
+        --disable-software-rasterizer \
+        --disable-accelerated-video-decode \
+        --disable-accelerated-2d-canvas \
+        --no-first-run \
+        --no-default-browser-check \
+        --disable-logging
