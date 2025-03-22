@@ -41,6 +41,7 @@ CMD Xvfb :99 -screen 0 ${SCREEN_WIDTH}x${SCREEN_HEIGHT}x${SCREEN_DEPTH} & \
     x11vnc -forever -usepw -display :99 & \
     google-chrome-stable \
         --no-sandbox \
+        --user-data-dir=/root/chrome-profile \
         --disable-gpu \
         --disable-software-rasterizer \
         --start-maximized \
